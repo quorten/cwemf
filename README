@@ -19,13 +19,17 @@ modifications.
 Next, you need to configure your web server.  Cwemf should be
 installed such that its entire contents are accessible from "/cwemf",
 including the CGI scripts.  You must also have your server setup to
-perform content negotiation on the CGI scripts in cwemf.  Here's an
-example configuration for Apache 2:
+perform content negotiation on the CGI scripts in cwemf.  "Topic
+forums" (see below) will also require special configuration for XHTML
+headers on automatic index generation.  Here's an example
+configuration for Apache 2:
 
 	Alias /cwemf/ /usr/local/share/cwemf/
 	<Directory /usr/local/share/cwemf/>
 		Options Indexes MultiViews FollowSymLinks ExecCGI
 		AllowOverride None
+		IndexIgnore HEADER.html
+		IndexOptions +SuppressHTMLPreamble +XHTML
 		AddHandler cgi-script .cgi
 		MultiviewsMatch Handlers
 		Order allow,deny
@@ -80,19 +84,13 @@ move on to testing topic forum mode:
   cd topic-forum
   chgrp www-data .
   chmod g+w .
-  cp /usr/local/share/cwemf/tocschema.html index.html
-  vi index.html # Edit the schema to your preferences.
-  ci -u -i -t-'Topic forum for testing' index.html
-  # Restrict access to httpd and a forum administrator.
-  rcs -awww-data,fmadmin index.html
+  cp /usr/local/share/cwemf/tocHEADER.html HEADER.html
+  vi HEADER.html # Edit the schema to your preferences.
 
 You'll notice that when you create new topic forums, there is no title
 heading printed within the web page.  If you want such a heading in
 your post, you can post that in manually, otherwise, you can leave it
-out if you don't want such a heading.  One last note: in order for a
-forum administrator to have access to topic forums, you'll need to
-modify "newtopic.cgi" to add the forum administrator's login name to
-the RCS access control modification command.
+out if you don't want such a heading.
 
 Using cwemf is that simple.  Its source code is also correspondingly
 simple.
